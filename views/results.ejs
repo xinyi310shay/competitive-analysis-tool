@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>竞品分析报告</title>
+  <style>
+    /* Woodsmoke Neutral Scale (12 stops, cool blue-shifted darks) */
+    :root {
+      --woodsmoke-25: #FAFAFA;
+      --woodsmoke-50: #F5F5F6;
+      --woodsmoke-100: #F0F1F1;
+      --woodsmoke-200: #ECECED;
+      --woodsmoke-300: #CECFD2;
+      --woodsmoke-400: #94969C;
+      --woodsmoke-500: #85888E;
+      --woodsmoke-600: #61646C;
+      --woodsmoke-700: #333741;
+      --woodsmoke-800: #1F242F;
+      --woodsmoke-900: #161B26;
+      --woodsmoke-950: #0C111D;
+
+      /* Semantic tokens — Light mode */
+      --background: #ffffff;
+      --foreground: var(--woodsmoke-950);
+      --card: #ffffff;
+      --card-foreground: var(--woodsmoke-950);
+      --primary: var(--woodsmoke-900);
+      --primary-foreground: var(--woodsmoke-50);
+      --secondary: var(--woodsmoke-100);
+      --secondary-foreground: var(--woodsmoke-900);
+      --muted: var(--woodsmoke-100);
+      --muted-foreground: var(--woodsmoke-500);
+      --accent: var(--woodsmoke-100);
+      --accent-foreground: var(--woodsmoke-900);
+      --border: var(--woodsmoke-200);
+      --input: var(--woodsmoke-300);
+      --ring: var(--woodsmoke-400);
+      --surface: var(--woodsmoke-50);
+      --surface-foreground: var(--woodsmoke-900);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      
+      /* Radius system */
+      --radius: 0.625rem;
+      --radius-sm: calc(var(--radius) * 0.6);
+      --radius-md: calc(var(--radius) * 0.8);
+      --radius-lg: var(--radius);
+      --radius-xl: calc(var(--radius) * 1.4);
+      
+      /* Typography */
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      color: var(--foreground);
+      background: var(--background);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .container-wrapper {
+      width: 100%;
+      padding: 0.5rem;
+      max-width: calc(1400px + 2rem);
+      margin: 0 auto;
+    }
+
+    .container {
+      max-width: 1400px;
+      padding: 1rem;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 1024px) {
+      .container {
+        padding: 2rem;
+      }
+    }
+
+    h1 {
+      font-size: 1.875rem;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.025em;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--card-foreground);
+    }
+
+    @media (min-width: 1024px) {
+      h1 {
+        font-size: 2.25rem;
+      }
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--woodsmoke-700);
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .card {
+        padding: 1.5rem;
+      }
+    }
+
+    .card h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--primary);
+      color: var(--card-foreground);
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      margin-top: 1.5rem;
+      color: var(--card-foreground);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 1.25rem;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    .screenshot-container {
+      margin: 1.5rem 0;
+      text-align: center;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    .screenshot-scroll {
+      max-height: 600px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .screenshot-scroll::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .screenshot-scroll::-webkit-scrollbar-track {
+      background: var(--muted);
+    }
+
+    .screenshot-scroll::-webkit-scrollbar-thumb {
+      background: var(--woodsmoke-400);
+      border-radius: 4px;
+    }
+
+    .screenshot-scroll::-webkit-scrollbar-thumb:hover {
+      background: var(--woodsmoke-500);
+    }
+
+    .screenshot-container img {
+      width: 100%;
+      display: block;
+    }
+
+    .screenshot-label {
+      padding: 0.75rem;
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      text-align: center;
+      border-top: 1px solid var(--border);
+      background: var(--background);
+    }
+
+    .error-message {
+      color: var(--error);
+      background: #fef2f2;
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      margin: 1rem 0;
+      border: 1px solid #fecaca;
+    }
+
+    /* 评分系统 */
+    .scores-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .score-item {
+      background: var(--surface);
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      text-align: center;
+    }
+
+    .score-label {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+      margin-bottom: 0.5rem;
+    }
+
+    .score-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .score-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--muted);
+      border-radius: 3px;
+      margin-top: 0.5rem;
+      overflow: hidden;
+    }
+
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+
+    .score-bar-fill.high { background: var(--success); }
+    .score-bar-fill.medium { background: var(--warning); }
+    .score-bar-fill.low { background: var(--error); }
+
+    /* 标签系统 */
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.375rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .tag.strength {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .tag.weakness {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* 核心洞察 */
+    .insight-card {
+      background: linear-gradient(135deg, var(--woodsmoke-900) 0%, var(--woodsmoke-800) 100%);
+      color: var(--woodsmoke-50);
+      padding: 1.5rem;
+      border-radius: var(--radius-lg);
+      margin-bottom: 1.5rem;
+    }
+
+    .insight-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.8;
+      margin-bottom: 0.5rem;
+    }
+
+    .insight-text {
+      font-size: 1.125rem;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+
+    /* 对比表格 */
+    .comparison-table-wrapper {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 1rem;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .comparison-table th {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      font-weight: 600;
+    }
+
+    .comparison-table th:first-child {
+      border-top-left-radius: var(--radius-md);
+    }
+
+    .comparison-table th:last-child {
+      border-top-right-radius: var(--radius-md);
+    }
+
+    .comparison-table td:first-child {
+      text-align: left;
+      font-weight: 600;
+      background: var(--muted);
+    }
+
+    .comparison-table tr:nth-child(even) td:not(:first-child) {
+      background: var(--card);
+    }
+
+    .comparison-score {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 0.875rem;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .comparison-score.high { background: #dcfce7; color: #166534; border: 2px solid #86efac; }
+    .comparison-score.medium { background: #fef3c7; color: #92400e; border: 2px solid #fcd34d; }
+    .comparison-score.low { background: #fee2e2; color: #991b1b; border: 2px solid #fca5a5; }
+
+    /* 机会点 */
+    .opportunities-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .opportunity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      margin-bottom: 0.75rem;
+    }
+
+    .opportunity-icon {
+      width: 2rem;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.875rem;
+      flex-shrink: 0;
+    }
+
+    .opportunity-icon.gap {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .opportunity-icon.benchmark {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .opportunity-icon.product {
+      background: #f3e8ff;
+      color: #6b21a8;
+    }
+
+    .opportunity-content {
+      flex: 1;
+    }
+
+    .opportunity-dimension {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      margin-bottom: 0.25rem;
+    }
+
+    .opportunity-description {
+      font-size: 0.875rem;
+      color: var(--card-foreground);
+    }
+
+    /* 总结 */
+    .summary-card {
+      background: var(--surface);
+      border-left: 4px solid var(--primary);
+      padding: 1.25rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem;
+    }
+
+    .summary-text {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--card-foreground);
+    }
+
+    /* 颜色面板 */
+    .colors-container {
+      margin-top: 1.5rem;
+    }
+
+    .color-palette {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .color-swatch {
+      width: 4rem;
+      height: 4rem;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+      position: relative;
+      border: 1px solid var(--border);
+    }
+
+    .color-swatch::after {
+      content: attr(data-color);
+      position: absolute;
+      bottom: -1.25rem;
+      left: 0;
+      right: 0;
+      font-size: 0.625rem;
+      text-align: center;
+      color: var(--muted-foreground);
+      word-break: break-all;
+      line-height: 1.2;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-wrapper">
+    <div class="container">
+      <h1>竞品分析报告</h1>
+      <a href="/" class="back-link">← 返回首页</a>
+      
+      <% if (comprehensiveAnalysis) { %>
+        <div class="card">
+          <h2>总体总结</h2>
+          <div class="summary-card">
+            <p class="summary-text"><%= comprehensiveAnalysis.overallSummary %></p>
+          </div>
+          
+          <div class="section-title">多产品横向对比表</div>
+          <div class="comparison-table-wrapper">
+            <div style="overflow-x: auto;">
+              <table class="comparison-table">
+                <thead>
+                  <tr>
+                    <th>分析维度</th>
+                    <% results.forEach((result, i) => { %>
+                      <% if (!result.error) { %>
+                        <th>竞品 <%= i + 1 %><br><small><%= result.url %></small></th>
+                      <% } %>
+                    <% }); %>
+                    <th>平均分</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% for (const [dimKey, dimData] of Object.entries(comprehensiveAnalysis.comparisonTable)) { %>
+                    <tr>
+                      <td><%= dimData.name %></td>
+                      <% dimData.scores.forEach((score, i) => { %>
+                        <td>
+                          <span class="comparison-score <%= score >= 8 ? 'high' : score >= 6 ? 'medium' : 'low' %>">
+                            <%= score %>
+                          </span>
+                        </td>
+                      <% }); %>
+                      <td>
+                        <span class="comparison-score <%= dimData.avg >= 8 ? 'high' : dimData.avg >= 6 ? 'medium' : 'low' %>">
+                          <%= dimData.avg.toFixed(1) %>
+                        </span>
+                      </td>
+                    </tr>
+                  <% } %>
+                  
+                  <tr>
+                    <td>核心洞察</td>
+                    <% results.forEach((result, i) => { %>
+                      <% if (!result.error) { %>
+                        <td style="text-align: left; padding: 1rem;"><%= result.coreInsight %></td>
+                      <% } %>
+                    <% }); %>
+                    <td></td>
+                  </tr>
+                  
+                  <tr>
+                    <td>优势</td>
+                    <% results.forEach((result, i) => { %>
+                      <% if (!result.error) { %>
+                        <td>
+                          <div class="tags-container">
+                            <% result.swotTags.strengths.forEach(strength => { %>
+                              <span class="tag strength"><%= strength %></span>
+                            <% }); %>
+                          </div>
+                        </td>
+                      <% } %>
+                    <% }); %>
+                    <td></td>
+                  </tr>
+                  
+                  <tr>
+                    <td>劣势</td>
+                    <% results.forEach((result, i) => { %>
+                      <% if (!result.error) { %>
+                        <td>
+                          <div class="tags-container">
+                            <% result.swotTags.weaknesses.forEach(weakness => { %>
+                              <span class="tag weakness"><%= weakness %></span>
+                            <% }); %>
+                          </div>
+                        </td>
+                      <% } %>
+                    <% }); %>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div class="section-title">设计机会点建议</div>
+          <ul class="opportunities-list">
+            <% comprehensiveAnalysis.opportunities.forEach((opp, i) => { %>
+              <li class="opportunity-item">
+                <div class="opportunity-icon <%= opp.type %>">
+                  <%= opp.type === 'gap' ? 'GAP' : opp.type === 'benchmark' ? 'STD' : 'PRO' %>
+                </div>
+                <div class="opportunity-content">
+                  <div class="opportunity-dimension"><%= opp.dimension %></div>
+                  <div class="opportunity-description"><%= opp.description %></div>
+                </div>
+              </li>
+            <% }); %>
+          </ul>
+        </div>
+      <% } %>
+      
+      <% results.forEach((result, index) => { %>
+        <div class="card">
+          <h2>竞品 <%= index + 1 %>: <%= result.url %></h2>
+          
+          <% if (result.error) { %>
+            <div class="error-message">
+              分析失败: <%= result.error %>
+            </div>
+          <% } else { %>
+            <div class="screenshot-container">
+              <div class="screenshot-scroll">
+                <img src="<%= result.screenshot %>" alt="<%= result.url %> 的完整网页截图">
+              </div>
+              <div class="screenshot-label">📸 完整网页长图 - 可滚动查看</div>
+            </div>
+          <% } %>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</body>
+</html>
