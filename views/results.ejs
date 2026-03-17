@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>竞品分析报告</title>
   <style>
-    /* Woodsmoke Neutral Scale (12 stops, cool blue-shifted darks) */
     :root {
       --woodsmoke-25: #FAFAFA;
       --woodsmoke-50: #F5F5F6;
@@ -20,7 +19,6 @@
       --woodsmoke-900: #161B26;
       --woodsmoke-950: #0C111D;
 
-      /* Semantic tokens — Light mode */
       --background: #ffffff;
       --foreground: var(--woodsmoke-950);
       --card: #ffffff;
@@ -42,14 +40,12 @@
       --warning: #f59e0b;
       --error: #ef4444;
       
-      /* Radius system */
       --radius: 0.625rem;
       --radius-sm: calc(var(--radius) * 0.6);
       --radius-md: calc(var(--radius) * 0.8);
       --radius-lg: var(--radius);
       --radius-xl: calc(var(--radius) * 1.4);
       
-      /* Typography */
       --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     }
 
@@ -216,7 +212,6 @@
       border: 1px solid #fecaca;
     }
 
-    /* 评分系统 */
     .scores-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -264,7 +259,6 @@
     .score-bar-fill.medium { background: var(--warning); }
     .score-bar-fill.low { background: var(--error); }
 
-    /* 标签系统 */
     .tags-container {
       display: flex;
       flex-wrap: wrap;
@@ -291,7 +285,6 @@
       color: #991b1b;
     }
 
-    /* 核心洞察 */
     .insight-card {
       background: linear-gradient(135deg, var(--woodsmoke-900) 0%, var(--woodsmoke-800) 100%);
       color: var(--woodsmoke-50);
@@ -314,7 +307,6 @@
       line-height: 1.6;
     }
 
-    /* 对比表格 */
     .comparison-table-wrapper {
       background: var(--surface);
       border-radius: var(--radius-lg);
@@ -376,7 +368,6 @@
     .comparison-score.medium { background: #fef3c7; color: #92400e; border: 2px solid #fcd34d; }
     .comparison-score.low { background: #fee2e2; color: #991b1b; border: 2px solid #fca5a5; }
 
-    /* 机会点 */
     .opportunities-list {
       list-style: none;
       padding: 0;
@@ -435,7 +426,6 @@
       color: var(--card-foreground);
     }
 
-    /* 总结 */
     .summary-card {
       background: var(--surface);
       border-left: 4px solid var(--primary);
@@ -448,40 +438,6 @@
       font-size: 1rem;
       line-height: 1.7;
       color: var(--card-foreground);
-    }
-
-    /* 颜色面板 */
-    .colors-container {
-      margin-top: 1.5rem;
-    }
-
-    .color-palette {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-top: 1rem;
-    }
-
-    .color-swatch {
-      width: 4rem;
-      height: 4rem;
-      border-radius: var(--radius-md);
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-      position: relative;
-      border: 1px solid var(--border);
-    }
-
-    .color-swatch::after {
-      content: attr(data-color);
-      position: absolute;
-      bottom: -1.25rem;
-      left: 0;
-      right: 0;
-      font-size: 0.625rem;
-      text-align: center;
-      color: var(--muted-foreground);
-      word-break: break-all;
-      line-height: 1.2;
     }
   </style>
 </head>
@@ -604,11 +560,49 @@
               分析失败: <%= result.error %>
             </div>
           <% } else { %>
-            <div class="screenshot-container">
-              <div class="screenshot-scroll">
-                <img src="<%= result.screenshot %>" alt="<%= result.url %> 的完整网页截图">
+            <% if (result.screenshot) { %>
+              <div class="screenshot-container">
+                <div class="screenshot-scroll">
+                  <img src="<%= result.screenshot %>" alt="<%= result.url %> 的完整网页截图">
+                </div>
+                <div class="screenshot-label">📸 完整网页长图 - 可滚动查看</div>
               </div>
-              <div class="screenshot-label">📸 完整网页长图 - 可滚动查看</div>
+            <% } %>
+            
+            <div class="scores-grid">
+              <% for (const [dimKey, score] of Object.entries(result.dimensionScores)) { %>
+                <div class="score-item">
+                  <div class="score-label"><%= 
+                    {
+                      visual: '视觉风格',
+                      information: '信息架构',
+                      interaction: '交互设计',
+                      usability: '可用性',
+                      brand: '品牌表达',
+                      content: '内容策略'
+                    }[dimKey] || dimKey
+                  %></div>
+                  <div class="score-value"><%= score %></div>
+                  <div class="score-bar">
+                    <div class="score-bar-fill <%= score >= 8 ? 'high' : score >= 6 ? 'medium' : 'low' %>" style="width: <%= score * 10 %>%;"></div>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+            
+            <div class="insight-card">
+              <div class="insight-label">核心洞察</div>
+              <div class="insight-text"><%= result.coreInsight %></div>
+            </div>
+            
+            <div class="section-title">优劣势标签</div>
+            <div class="tags-container">
+              <% result.swotTags.strengths.forEach(strength => { %>
+                <span class="tag strength"><%= strength %></span>
+              <% }); %>
+              <% result.swotTags.weaknesses.forEach(weakness => { %>
+                <span class="tag weakness"><%= weakness %></span>
+              <% }); %>
             </div>
           <% } %>
         </div>
